@@ -1,0 +1,15 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: diabetes-regressor
+  namespace: sklearn-kserve
+  annotations:
+    serving.kserve.io/deploymentMode: "Standard"
+
+spec:
+  predictor:
+    model:
+      modelFormat:
+        name: mlflow
+      protocolVersion: v2
+      storageUri: "models:/diabetes-regressor/2"
