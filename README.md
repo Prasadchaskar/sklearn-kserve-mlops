@@ -125,7 +125,7 @@ You also need a DagsHub account and a DagsHub repository with MLflow enabled.
 Clone the project:
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
+git clone https://github.com/Prasadchaskar/sklearn-kserve-mlops.git
 cd sklearn-kserve-mlops
 ```
 
