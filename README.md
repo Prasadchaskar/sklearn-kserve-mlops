@@ -362,31 +362,70 @@ kubectl version
 
 ---
 
-# 12. Install KServe
+## 12. Install KServe
 
-This project uses KServe Standard deployment mode.
+This project uses **KServe v0.16.0** with **Standard deployment mode**.
 
-KServe should be installed before deploying the model.
+Standard mode uses Kubernetes Deployments and Services to serve machine learning models without requiring Knative Serving.
 
-For this project, use KServe:
+### 12.1 Install KServe
 
-```text
-v0.16.0
+Install KServe using the official v0.16.0 release manifests.
+
+```bash
+# Install KServe CRDs and controller
+kubectl apply --server-side -f \
+  https://github.com/kserve/kserve/releases/download/v0.16.0/kserve.yaml
+
+# Install default ClusterServingRuntimes
+kubectl apply --server-side -f \
+  https://github.com/kserve/kserve/releases/download/v0.16.0/kserve-cluster-resources.yaml
 ```
 
-After installation, verify the KServe namespace:
+The `--server-side` option is used when applying the KServe manifests because some KServe CRDs are large.
+
+### 12.2 Configure Standard Deployment Mode
+
+KServe supports multiple deployment modes. Configure Standard as the default mode for this project.
+
+```bash
+kubectl patch configmap/inferenceservice-config \
+  -n kserve \
+  --type=merge \
+  -p '{"data":{"deploy":"{\"defaultDeploymentMode\":\"Standard\"}"}}'
+```
+
+Verify the deployment mode:
+
+```bash
+kubectl get configmap inferenceservice-config \
+  -n kserve \
+  -o jsonpath='{.data.deploy}'
+```
+
+Expected configuration:
+
+```json
+{
+  "defaultDeploymentMode": "Standard"
+}
+```
+
+### 12.3 Verify KServe Installation
+
+Verify that the KServe namespace exists:
 
 ```bash
 kubectl get namespace kserve
 ```
 
-Verify the controller:
+Verify the KServe controller:
 
 ```bash
 kubectl get pods -n kserve
 ```
 
-The KServe controller should be:
+The KServe controller pod should reach:
 
 ```text
 Running
@@ -415,6 +454,8 @@ The cluster should contain the MLServer runtime:
 ```text
 kserve-mlserver
 ```
+
+KServe is now installed and ready for deploying the project's InferenceService.
 
 ---
 
